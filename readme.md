@@ -1,66 +1,3 @@
-Notes on deadlines
-==================
-
-As discussed in the lecture, I accidently didn't make this publicly
-visible until two days after the official release date, so I think
-to be fair, I should stick to the "two weeks for each of the first
-four courseworks" rule.
-
-As I also mentioned, the Tuesday deadlines were rather arbitrary,
-based on the lectures, and while no-one seemed to have any particular
-preference (certainly no-one wanted them earlier), I'm going to go
-ahead and shift the deadlines back by two days, en masse. My rationale is:
-- Lots of people get work done over the weekend, and I have most
-  of my teaching Mon/Tue, so it is difficult to come back on issues
-  quickly.
-- Providing a slightly bigger gap between lectures and the coursework
-  backing them probably makes sense from a structural/educational point
-  of view.
-
-So the next three courseworks will still be released on a week by week
-basis, with two weeks to do each:
-
-- [CW2](https://github.com/HPCE/hpce-2014-cw2): Issued Jan 22nd, due Feb 5th ** You are here**
-- [CW3](https://github.com/HPCE/hpce-2014-cw2): Issued Jan 29th, due Feb 12th
-- CW4: Issued Feb 5th, due Feb 19th
-
-As part of the _specification_ for the formative courseworks
-(these are not extensions, it is part of the spec), you have
-an option on a single block of two "flexible days". As professional
-engineers you may _plan_ to exercise these in a way that helps you
-achieve the best outcome for your client (you). Everyone gets to
-allocate their two flexible days to just one of the first four
-courseworks (or not at all), once used, it is gone. Submission
-after the official deadline will be considered to be implicit
-exercise of the option. (_The main goal here is to give people
-some flexibility - these courseworks are formative, they are
-not supposed to stress people out, and they are marked generously,
-but they do need to be done on a regular schedule_).
-
-The last two courseworks do not overlap, there are no
-flexible days, and the deadlines are:
-- CW5: Issued Feb 19th, due Mar 3rd
-- CW6: Issued Mar 4th, due Mon 16th
-
-The deadlines are (still) designed to get out of the way
-of DoC revision and exams in weeks 10 and 11, and
-other coursework heavy end of term things.
-
-As always: I'm aware that this course will clash with a lot of stuff
-(interim reports, other courseworks, and so on), so I'm generally
-quite happy to consider cohort-wide modifications, as long as no-one
-is disadvantaged. That said, I know people plan around the deadlines,
-so I don't want to mess things around too much, or just end up
-randomly prolonging things (that ended up happening a bit last term).
-
-Oh, and while I'm abusing github as a message-board: in case
-it's not obvious, I'm quite happy to answer questions about
-the courseworks (or lectures) in person, if that's easier
-than using issues. Previous years I've sometimes gone and
-hung around at lunch-times in the level 5 lab on one or
-two days a week; I can do that too if there is demand: e.g. Thursday
-at 1pm works for me.
-
 Goals
 =====
 
@@ -76,19 +13,25 @@ surprisingly good scaling over multiple processors.
 The overall goals of this coursework are:
 
 1. Get experience in using the command line and shell-script,
-   for those who are used to GUI-based programming.
+   for those who are used to GUI-based programming. This will
+   help with the multi-core, GPU, and AWS programming.
 
-2. Some (minimal) experience in automating setup.
+2. Some (minimal) experience in automating setup. Again, this
+   will help with AWS work.
 
 3. Understand process pipelines, and how they can improve
-   efficiency and enable parallelism.
+   efficiency and enable parallelism. For lots of data-analysis
+   tasks this an extremely effective way of speeding things
+   up, and avoiding hitting disk.
 
-4. Explore the built-in parallelism available in the shell.
+4. Look at makefiles as a way of creating dependency graphs,
+    and organising the automation of tasks rather than doing
+    it manually.
 
-5. Look at makefiles as a way of creating dependency graphs.
-
-6. Use the built-in parallelism of make, and explore it's
-   advantages and limitations.
+5. Explore the built-in parallelism available in makefiles
+    allowing you to exploit process level parallelism
+    where it is possible to specify dependencies at the
+    process level.
 
 The goal is not to produce ultra-optimised C code (though if
 you do, and it works, then that is nice too). Also, I make no apologies
@@ -96,14 +39,17 @@ for making you go through some slightly circuitous steps on the
 way to the streaming and parallelism bits later on in the
 exercise.
 
-For some of you it will make you do things you already
+Managing Expectations
+---------------------
+
+For some of you this coursework will make you do things you already
 know how to do, or conflict with the ways that you've done
 things in personal projects or industry. However, I think
 most people will learn something useful (?), and it is
 important to be able to work in this kind of environment
 because:
 
-- We need it to access the hardware used later on
+- We need it to access the remote hardware used later on
   in the course.
 
 - Linux is generally the environment of choice if you
@@ -111,11 +57,27 @@ because:
 
 - There is often no GUI in production HPC contexts
   (whether embedded or super-computer).
-  
+
 - Code often needs to be deployable without any
   user input, as it needs to start up on 100
   linux boxes and sort itself out.
-  
+
+Some EEE and MsC students have little or no experience
+with the concepts of reality of running programs without
+physically being sat in front of the computer running
+the program, so this is that. I've talked to a few EEE
+students after graduation, and quite a few have said
+that these skills were some of the most important
+in day-to-day life (both for final-year projects and
+their work-life).
+
+Multi-core and GPU knowledge is a very useful skill, but
+sometimes it is easier to set up a job with 1000 tasks, go away
+for the weekend and forget about it, then come back to all
+the results. Why spend hours optimising or parallelising
+code so it runs in an hour, when you can just run lots
+of copies of the slow version in parallel for a day?
+
 Environment Setup
 -----------------
 
@@ -126,24 +88,25 @@ This coursework should be performed in a posix-like
 environment, so that could be Linux, OS-X, or Cygwin.
 Particular things it relies on are:
 
-- **Bash**: There are many shells (the program that
+- **<a href="https://en.wikipedia.org/wiki/Bash_(Unix_shell)">Bash</a>**: There are many shells (the program that
   proves the interactive command line), and there are
   some differences in input syntax. This coursework
   explicitly targets the Bash shell, as it is installed
   in most systems (even when it isn't the default).
 
-- **Make**: While traditionally used just for building
+- **<a href="https://en.wikipedia.org/wiki/Make_(software)">Make</a>**: While traditionally used just for building
   programs, "make" can also be used for the general
-  co-ordination of many programs working together. We
-  will specifically use GNU make.
-  
+  co-ordination of many programs working together - if you need
+  to run 1000 jobs, each of which has multiple steps, and you
+  want to run them in parallel, it is extremely effective.
+  We will specifically use GNU make.
+
 - **C++ toolchain**: Some of the audio processing
   will be done with programs compiled by you, so you need
   a command line toolchain setup. It doesn't really
   matter if it is gcc, clang, or icc, though if you
-  don't have any strong preference, stick with the
-  gcc.
-  
+  don't have any strong preference, stick with  gcc.
+
 First start a command line terminal -- the exact
 mechanism depends on your OS. You should now be
 looking at a command line shell, with some sort
@@ -178,12 +141,12 @@ coursework first, and it may just work ok.
 Change to a directory you want to do your work in, then
 clone the coursework repository:
 
-    git clone https://github.com/HPCE/hpce-2014-cw2
+    git clone https://github.com/HPCE/hpce-2015-cw2
 
 Again, if `git` isn't found, get it through your package
 manager.
 
-For this courswork, you must keep things within git,
+For this coursework, you must keep things within git,
 as it forms part of your submission.
 
 Part A : Build automation
@@ -220,10 +183,10 @@ doing this:
    to look at your environment and see what is currently installed,
    and allows the user to specify where the new package will be
    installed.
-   
+
 4. Execute "make" to build all the sources and produce
    the executable.
-   
+
 5. Do "make install" to install the binaries and documentation.
 
 The process is not completely standardised, but for many packages
@@ -249,16 +212,14 @@ exist, the info pages are usually more detailed and better structured
 (and the man page may just be a [stub](http://xkcd.com/912/), though
 some tools only have man pages.
 
-_Note: if you have problems getting the tar-ball, have a look at Issue [#1](https://github.com/HPCE/hpce-2014-cw2/issues/1). Thanks to @farrell236._
-
 Here we are specifying that the file should be downloaded to
 the `packages` directory. Once curl finishes, do `ls packages`
 to check that you can see the download file there.
 
-Note that this as a distinct step in the build process:
+Note that this download is a distinct step in the overall build process:
 
 1. we depended on nothing,
-2. executed the curl command,
+2. then executed the curl command,
 3. and the output of that command was the tarball.
 
 Unpack the sources
@@ -272,13 +233,14 @@ delete the contents of `build` without losing anything.
 
 You should still be at the base directory, but that is not
 where we want to extract. Do `cd build` to get into the
-build directory. The general [command to extract things](href{http://xkcd.com/1168/)
+build directory. The general [command to extract things](http://xkcd.com/1168/)
 is `tar -xzf some-file`, where `some-file` is the path to a
 tarball you want to extract. The `-xzf` option specifies
 what you want to do:
+
 - `x` means eXtract;
 - `z` means the tarball is compressed with gzip;
--  `f` means that we are specifying the input tarball using a File path.
+- `f` means that we are specifying the input tarball using a File path.
 
 The tarball is still in the packages directory, so we'll need to
 specify a relative path. You may wish to do:
@@ -286,7 +248,7 @@ specify a relative path. You may wish to do:
     ls ..
     ls ../packages
     ls ../packages/sox-14.4.1.tar.gz
-    
+
 just to check you know where you are pointing. Knowing
 that the relative path from the `build` directory is `../packages/sox-14.4.1.tar.gz`,
 we can now extract the files using:
@@ -303,7 +265,7 @@ This step is now complete, and again we can summarise the step
 in terms of inputs, commands, and outputs:
 
 1. the input is the tarball;
-2. the command is tar;
+2. the command is `tar`;
 3. and the output is the extracted files, and a specific output
    is the file called `configure`.
 
@@ -358,19 +320,24 @@ you can use the following:
 
 1. The `pwd` command prints the current directory.
 2. Enclosing a command `cmd` in `$(cmd)` captures the output
-   of that variable.
-3. You can concatenate strings in the shell.
-   
-So for example:   
-   
-    X=`pwd`;
+   of that command.
+3. The syntax $X retrieves the value of a shell variable
+    (_yes, I know, it makes no sense that `$(X)` tries to
+    run a program called `X`, and `$X` gets the value of the
+    variable `X`_).
+4. You can concatenate strings in the shell by putting
+    variables next to strings.
+
+So for example:
+
+    X=$( pwd );
     echo $X
 
 captures the output of `pwd` into the shell
 variable X, then prints the value of X using echo.
 Combining that with string concatenation, you can do:
 
-    X=`pwd`;
+    X=$( pwd );
     echo "$X/../../local"
 
 which should now print your current directory followed
@@ -381,7 +348,7 @@ the `..` components later on.
 Collapsing the two steps, you can do:
 
     echo "$(pwd)/../../local"
-    
+
 to combine the two.
 
 This leads us to a (rather hacky, but portable) solution:
@@ -397,7 +364,7 @@ your package manager, but if you find uncorrectable errors,
 switch to a controlled environment like Cygwin. Building
 the environment should not involve any debugging or
 difficulty, so don't get caught up trying to debug problems.
-If you come across any problems, raise an [issue](https://github.com/HPCE/hpce-2014-cw2/issues),
+If you come across any problems, raise an [issue](https://github.com/HPCE/hpce-2015-cw2/issues),
 and either I or someone else might be able to help. Don't forget to
 include actionable information though.
 )
@@ -441,8 +408,9 @@ starts -- if anything strange happens at this stage, you may wish
 to switch to a clean cygwin install.)
 
 Laboring the pedagogical point, in this stage:
+
 1. the input file was the Makefile;
-2. the process was calling make;
+2. the action was calling make;
 3. and the output is the executable.
 
 At this point we can start to exploit the parallelism of
@@ -471,7 +439,7 @@ This type of process-level parallelism is extremely useful because:
 - The parallelism is declarative rather than explicit: internally the makefile
   does not describe what should execute in parallel, instead it
   specifies a whole bunch of tasks to perform, and any dependencies between those tasks.
-  
+
 - It is very safe: there is usually no chance of deadlocks or
   race conditions.
 
@@ -504,7 +472,7 @@ The installation directory is `local`, so if you do:
 
     ls ../../local/
 
-You'll see that you have a shiny new `local/bin`, `local/include', and
+You'll see that you have a shiny new `local/bin`, `local/include`, and
 so on created, and hopefully if you do:
 
     ls ../../local/bin
@@ -514,7 +482,7 @@ You'll see the `sox` binary there.
 So, for this process:
 
 1. the input is the `sox` binary in the `build` dir;
-2. the process is `make install`;
+2. the action is `make install`;
 3. and the output is the `sox` binary in the `local/bin` dir.
 
 If you return to the base folder, you can now run sox
@@ -536,11 +504,14 @@ The steps you should follow will be exactly the same as for `sox`, but
 you'll need to change the various names from `sox` to `lame` as you
 go through.
 
-_Note: @bwh10 has identified [a build problem with gcc 4.9+](https://github.com/HPCE/hpce-2014-cw2/issues/4)
-that wasn't identified by my test setups. @bwh10 gives 
-the steps needed to correct the problem (if it occurs), or there
-is an alternate solution given in the issue, so they can
-be integrated directly into your makefile if you wish._
+Note: you may encounter build errors duing the build for specific
+versions of gcc. If you see build errors, try using the command:
+
+    ./configure --prefix="$(pwd)/../../local" CPPFLAGS=-march=native
+
+The extra flags tell the gcc compiler to target whatever processor
+the compiler is being run on. For most platforms this is not needed,
+but it should cause no harm.
 
 Checking it works
 -----------------
@@ -572,10 +543,6 @@ using your own linux, then you can install `libasound2-dev`
 to get audio support. If you can't get it to play live audio at
 all, then don't worry. As long as `sox` builds it is fine._
 
-_A more [obscure issue](https://github.com/HPCE/hpce-2014-cw2/issues/3) has been
-observed on one cygwin install, due to some sort of problems with [globbing](http://en.wikipedia.org/wiki/Glob_%28programming%29). If you see
-errors from `sox` referring to "glob", try looking at the issue.)_
-
 The three commands correspond to three stages in a parallel processing pipeline:
 
 1. Curl is downloading a file over http, and sending it to stdout.
@@ -586,7 +553,7 @@ The three commands correspond to three stages in a parallel processing pipeline:
 
 3. Sox is reading a wav over its stdin (`-`), and sending it to
    the audio output device (`-d`).
-   
+
 If you look at a process monitor while it is playing (e.g. taskmgr in windows,
 or `top`/`htop` in unix), then you'll see that all three processes are active
 at the same time. However, the processing requirements are very small.
@@ -649,7 +616,7 @@ Each rule consists of three parts:
 
 - **dependencies** Zero or more files which must already exist before the rule can execute.
 
-- **commands** Zero or more shell commands to execute in order to build the target.
+- **commands** Zero or more shell commands (or actions) to execute in order to build the target.
 
 The general format of a rule is:
 
@@ -848,11 +815,11 @@ of [two stages](http://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-th
 
 - Staging: use the `git add` command to tell git that
   your want to add, or "stage", a file for the next commit.
-  
+
 - Committing: use the `git commit` command to tell
   git that you want to record all the currently staged
   changes.
-  
+
 I reccomend using a GUI (see the other notes about git),
 which will make the process easier, and allows you to
 combine the two steps.
@@ -891,7 +858,7 @@ and enter the following text:
 
     #!/bin/bash
     curl $1 | ../local/bin/lame --mp3input --decode - -
-    
+
 The `$1` represents the first command line argument to
 `mp3_url_src.sh`, and the `|` (pipe) is saying that the
 output stream of curl should be sent to the  input stream
@@ -902,20 +869,20 @@ Create another file called `audio_sink.sh`, and give it the contents:
 
     #!/bin/bash
     ../local/bin/sox  - -d
-    
+
 This sox command will play audio coming in over its input stream,
 and it will inherit its input from the overall `audio_sink.sh` input
 stream.
 
 Save both files, and as before, be very careful about line endings on windows.
 _If weird things are happening, try doing `cat -v your_file_name.sh`,
-and check that there aren't any special characters at the end of the line.
+and check that there aren't any special characters at the end of the line._
 
 We will now mark these scripts as executable, so that they
 can be used as programs:
 
     chmod u+x mp3_url_src.sh audio_sink.sh
-    
+
 This command modifies the permissions for the user (`u`),
 adding (`+`) the execute (`x`) permission. If you do a `ls -la`,
 you should now see the files have the `x` attribute (on cygwin,
@@ -934,7 +901,7 @@ via their stdin (input stream) and stdout (output stream).
 To let you record to an mp3 (useful if you can play via sox, or you
 are getting sick of Beethoven), you can create another file
 called `mp3_sink.sh`, containing:
-    
+
     #!/bin/bash
     ../local/bin/lame -r -s 44.1 --signed --bitwidth 16 - $1
 
@@ -993,7 +960,7 @@ long it took.
     time ( ./mp3_file_src.sh bn9th_m4.mp3  > /dev/null )
 
 you'll notice that the CPU usage shoots up to 100\% (at least
-on one CPU), and it will probably decode the file in 
+on one CPU), and it will probably decode the file in
 a few seconds.
 
 Getting raw data
@@ -1089,11 +1056,6 @@ warnings (generally a useful thing to have for later stages); and
 `-lm` tells it to link to the maths library. If you wish, you could
 also add `-std=c99` to the flags, if you want to use C99 constructs.
 
-_Note: I accidently put `LDFLAGS=-lm` in the original version,
-which [isn't correct](https://github.com/HPCE/hpce-2014-cw2/issues/18)
-(though works on some compilers). Thanks to @salmanarif for both pointing
-out the bug and giving the solution._
-
 Now build it again with:
 
     make passthrough
@@ -1105,8 +1067,8 @@ do the make:
 
 1. Modify the source file `passthrough.c`, i.e. make sure the
    file's modification date is updated to now (which will be more
-   recent than the . You could do that by simply
-	odifying and saving the C file, or by using the `touch` command.
+   recent than the executable). You could do that by simply
+    modifying and saving the C file, or by using the `touch` command.
 
 2. Pass the `-B` flag to make, in order to force it to
    ignore timestamps and build everything. So you could
@@ -1133,11 +1095,10 @@ it processes n samples (n*4 bytes). If the executable is given no arguments,
 it should use a default of 512 samples. If a positive integer is passed to
 passthrough, then that should be the number of samples used to buffer.
 
-_Note: for larger n you will find that the last batch of samples is smaller
-than you requested, causing a [warning](https://github.com/HPCE/hpce-2014-cw2/issues/15).
-This is fine as long as it happens at the end of the stream: if you are
-reading in 64 sample chunks, and there are 1000 samples in total, the final
-chunk cannot contain 64 samples.
+Note: for larger n you will find that the last batch of samples is smaller
+than you requested, causing a warning. This is fine as long as it happens at
+the end of the stream: if you are reading in 64 sample chunks, and there are
+1000 samples in total, the final chunk cannot contain 64 samples.
 
 You can explore the effect of batch size on performance by
 looking at bandwidth using raw data. We've seen `/dev/null`
@@ -1154,7 +1115,7 @@ bytes of a stream using `head -n N`. So if we do:
 
     time cat /dev/zero | head -c 1024000 | ./passthrough > /dev/null
 
-tt will estimate the time take to process a million bytes.
+it will estimate the time take to process a million bytes.
 
 We would like to know how the execution time scales
 with n, so we could do:
@@ -1183,15 +1144,15 @@ We can use that to quickly evaluate the scaling of the program:
         echo $n;
         /usr/bin/time -f %e cat /dev/zero | head -c 1024000 | ./passthrough $n > /dev/null
     done
-    
-_Note: I switched from `time` to `\usr\bin\time` in this command to tackle
-[the problem](https://github.com/HPCE/hpce-2014-cw2/issues/7) found by @AugustineTan,
-where `time` won't take the `-f %e` input arguments. The main point is to get
-the timing data out in a format that we could analyse and graph. @txsl then
-pointed out that [/usr/bin/time doesn't support -f on OSX](https://github.com/HPCE/hpce-2014-cw2/issues/14),
-which kind of destroys that too. My main point is to show that you
-can automate the execution of tests, and that you can automate
-the collection of the test results._
+
+Note: unfortunately there is not complete agreement on what
+command should be used to time things. Bash has a shell built-in
+called `time`, but there is often an actual program called
+`/usr/bin/time` which has more output options. The key idea
+we're trying to explore is that you can automate the timing
+runs, and also automatically collect the data in a form that you
+can analyse and graph. If you can't get your `time` to support the `-f %e`
+switch, don't worry too much.
 
 From here it is possible to see how we are approaching
 your function timer from the matlab exercise. Instead
@@ -1204,16 +1165,11 @@ Dumping signals
 **Task**: Write a C program called `print_audio.c`, which reads
 audio data from stdin, and then prints it as output to stdout
 as comma-seperated-value lines containing:
+
 - The sample index (first sample is at time zero).
 - The effective time of the sample (first sample is at time zero).
 - The left channel in decimal (remember it is signed 16-bit).
 - The right channel in decimal
-
-_Note: The file 200hz.raw [was missing](https://github.com/HPCE/hpce-2014-cw2/issues/8) in
-the original upload, as I was over-eager in trying to stop large binary files
-(mp3, wav, raw, exe) getting into git via the `.gitignore` file. Thanks to @bwh10.
-You can get this file by doing a "git pull" in your local repository (in your git GUI,
-or on the command line)._
 
 For example:
 
@@ -1237,16 +1193,17 @@ Should produce the output:
     13, 0.000295, 10860, 10860
     14, 0.000317, 11653, 11653
     15, 0.000340, 12435, 12435
-    
+
 The exact number of output digits for the "time" column is not
 that important, but it should show enough digits that it is possible
 to see the time changing.
 
 Note that the lines can be read as:
+
 - `0, 0/44100, sin(0 * 1/44100 * 200 * 2*pi)*30000, sin(0 * 1/44100 * 200 * 2*pi)*30000`
 - `1, 1/44100, sin(1 * 1/44100 * 200 * 2*pi)*30000, sin(1 * 1/44100 * 200 * 2*pi)*30000`
 - `2, 2/44100, sin(2 * 1/44100 * 200 * 2*pi)*30000, sin(2 * 1/44100 * 200 * 2*pi)*30000`
-    
+
 _This task is intentionally easy; experience suggests that people
 won't create debugging tools unless they are forced too._
 
@@ -1263,8 +1220,8 @@ default frequency should be 200hz. The generator should use a batch size of
 If we consider the very first sample output to have time `t`=0, then at
 time `t` both left and right output should have the value:
 
-    30000 sin ( t * 2 * PI * f) 
-    
+    30000 sin ( t * 2 * PI * f)
+
 rounded to 16 bit. An example segment is given in `200hz.raw`.
 There should be no "glitching" in the output - the end
 of one set of 512 samples should blend smoothly into the
@@ -1354,9 +1311,9 @@ real-time streaming systems, but bear in mind I'm not a DSP expert -- feel free
 to laugh at the naivete of my coefficients.
 
 We can represent one channel of our discrete-time input audio as
-the sequence x_1,x_2,... and we'll filter it with a k-tap FIR filter.
-The filter has k real coefficients, c_0,..c_{k-1}, and the output sequence
-$x'_1,x'_2,...$ is defined as:
+the sequence `x_1,x_2,...` and we'll filter it with a k-tap FIR filter.
+The filter has k real coefficients, `c_0,..c_{k-1}`, and the output sequence
+`x'_1,x'_2`,... is defined as:
 
     x'_i = \sum_{j=0}^{k-1} x_{i-j} c_{j}
 
@@ -1405,7 +1362,7 @@ Some benchmarking
 -----------------
 
 We're now going to benchmark two different ways of using our FIRs: first
-by using intermediate files, then by using direct streaming. 
+by using intermediate files, then by using direct streaming.
 
 **Task**: Create a script called `audio/corrupter.sh`, which takes an audio
 stream as input, mixes it with sine waves, and produces an output. This script
@@ -1466,7 +1423,7 @@ Hint: _your script could start with something like_:
 
     T2=`mktemp ../tmp/XXXXXXX`;
     cat $T1 | ./fir_filter coeffs/f600.csv > $T2;
-    
+
     ...
 
 _where the first filter is taking stdin from the script's stdin,
@@ -1511,14 +1468,14 @@ type `make filters`, and all your files will be updated. Also
 add the following to the end of `./makefile`:
 
     filters :
-        cd audio && $(MAKE) 
+        cd audio && $(MAKE)
 
     all : tools filters
 
 which means that from the base directory you can can type:
 
     make all
-    
+
 and it will build all the tools and all the audio filters
 (and if you do `make -j 4` it will use up to 4 parallel
 processes to do so).
@@ -1540,10 +1497,10 @@ This should create a submission tarball in the directory below
 your work. Note that it will include the git repository (.git),
 which will contain the history of your work.
 
-_Note: on some systems the `prepare_submissions.sh` file appears
-to have [windows line endings](https://github.com/HPCE/hpce-2014-cw2/issues/12),
-though I've been unable to replicate. This can be fixed with the
-`dos2unix` program if it happens._
+Note: on some systems the `prepare_submissions.sh` file may
+aquire windows line endings, though I'm unable to work out
+under what scenarios this happens. This can be fixed with the
+`dos2unix` program if it happens.
 
 Before submitting, you should do a number of checks to make sure
 it works:
@@ -1553,11 +1510,10 @@ it works:
 3. Go into the audio directory and run `make filters` to check that they build.
 4. Choose an mp3, and `./mp3_file_src.sh your_mp3.mp3 | ./corrupter.sh | ./all_firs_direct.sh > /dev/null`.
 
-_Note: for some systems it seems permissions
-[are not preserved](https://github.com/HPCE/hpce-2014-cw2/issues/13), but unfortunately
+Note: for some systems it seems permissions are not preserved, but unfortunately
 I can't replicate. I will commit to forcing permissions of scripts to execute and
 converting dos line endings to unix in the testing, so don't worry too much if
-you have to manually fix it up._
+you have to manually fix it up.
 
 If that all works, submit your tarball via blackboard.
 
