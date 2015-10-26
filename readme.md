@@ -351,9 +351,25 @@ Collapsing the two steps, you can do:
 
 to combine the two.
 
-This leads us to a (rather hacky, but portable) solution:
+_Note: see [issue 4](https://github.com/HPCE/hpce-2015-cw2/issues/4) for
+a discussion about the $(.) syntax in makefiles._
 
-    ./configure --prefix="$(pwd)/../../local"
+This leads us to a (rather hacky, but portable) solution that works
+on both the command line and in a makefile:
+
+    ./configure --prefix="`pwd`/../../local"
+    
+or a slightly nicer version that _only_ works in the makefile is:
+
+    ./configure --prefix="$$(pwd)/../../local)"
+
+the second version uses `$$`, which is escaped to a single `$` by
+the makefile, and so is seen the same as the original by the
+underlying shell.
+
+_Note: I'm a bit wary about hacking these instructions as I go,
+as I haven't regression tested them, so please respond
+in [issue 4](https://github.com/HPCE/hpce-2015-cw2/issues/4) if this step doesn't work._
 
 You should now see huge amounts of configuration messages
 go past as it works out what your system looks like.
