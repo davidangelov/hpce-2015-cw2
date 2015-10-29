@@ -371,6 +371,12 @@ _Note: I'm a bit wary about hacking these instructions as I go,
 as I haven't regression tested them, so please respond
 in [issue 4](https://github.com/HPCE/hpce-2015-cw2/issues/4) if this step doesn't work._
 
+Note: @SzeKiatTan suggested [another good method](https://github.com/HPCE/hpce-2015-cw2/issues/4),
+which is to use the `CURDIR` variable provided by GNU make:
+
+    ./configure --prefix="$(CURDIR)/../../local"
+
+
 You should now see huge amounts of configuration messages
 go past as it works out what your system looks like.
 
