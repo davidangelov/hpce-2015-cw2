@@ -361,7 +361,7 @@ on both the command line and in a makefile:
     
 or a slightly nicer version that _only_ works in the makefile is:
 
-    ./configure --prefix="$$(pwd)/../../local)"
+    ./configure --prefix="$$(pwd)/../../local"
 
 the second version uses `$$`, which is escaped to a single `$` by
 the makefile, and so is seen the same as the original by the
