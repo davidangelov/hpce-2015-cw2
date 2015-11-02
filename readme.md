@@ -565,6 +565,13 @@ using your own linux, then you can install `libasound2-dev`
 to get audio support. If you can't get it to play live audio at
 all, then don't worry. As long as `sox` builds it is fine._
 
+**Note (updated):** _There seem to be a lot of problems on modern stock
+Ubuntu, which means that `/dev/dsp` can't be opened. There are also
+some suggestions from @raymond-williams on [getting it working in Ubuntu](https://github.com/HPCE/hpce-2015-cw2/issues/5).
+But if you can't get audio working, it is fine to redirect to an mp3
+or wav and play it normally. As long as sox builds, you'll pass the
+auto-tests._
+
 The three commands correspond to three stages in a parallel processing pipeline:
 
 1. Curl is downloading a file over http, and sending it to stdout.
