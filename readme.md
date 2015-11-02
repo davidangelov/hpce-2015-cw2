@@ -361,7 +361,7 @@ on both the command line and in a makefile:
     
 or a slightly nicer version that _only_ works in the makefile is:
 
-    ./configure --prefix="$$(pwd)/../../local)"
+    ./configure --prefix="$$(pwd)/../../local"
 
 the second version uses `$$`, which is escaped to a single `$` by
 the makefile, and so is seen the same as the original by the
@@ -370,6 +370,12 @@ underlying shell.
 _Note: I'm a bit wary about hacking these instructions as I go,
 as I haven't regression tested them, so please respond
 in [issue 4](https://github.com/HPCE/hpce-2015-cw2/issues/4) if this step doesn't work._
+
+Note: @SzeKiatTan suggested [another good method](https://github.com/HPCE/hpce-2015-cw2/issues/4),
+which is to use the `CURDIR` variable provided by GNU make:
+
+    ./configure --prefix="$(CURDIR)/../../local"
+
 
 You should now see huge amounts of configuration messages
 go past as it works out what your system looks like.
@@ -558,6 +564,13 @@ cygwin (32 or 64 bit), and on many linuxes, everything be fine. If you are
 using your own linux, then you can install `libasound2-dev`
 to get audio support. If you can't get it to play live audio at
 all, then don't worry. As long as `sox` builds it is fine._
+
+**Note (updated):** _There seem to be a lot of problems on modern stock
+Ubuntu, which means that `/dev/dsp` can't be opened. There are also
+some suggestions from @raymond-williams on [getting it working in Ubuntu](https://github.com/HPCE/hpce-2015-cw2/issues/5).
+But if you can't get audio working, it is fine to redirect to an mp3
+or wav and play it normally. As long as sox builds, you'll pass the
+auto-tests._
 
 The three commands correspond to three stages in a parallel processing pipeline:
 
