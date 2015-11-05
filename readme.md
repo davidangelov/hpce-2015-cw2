@@ -89,7 +89,7 @@ environment, so that could be Linux, OS-X, or Cygwin.
 Particular things it relies on are:
 
 - **<a href="https://en.wikipedia.org/wiki/Bash_(Unix_shell)">Bash</a>**: There are many shells (the program that
-  proves the interactive command line), and there are
+  provides the interactive command line), and there are
   some differences in input syntax. This coursework
   explicitly targets the Bash shell, as it is installed
   in most systems (even when it isn't the default).
@@ -210,7 +210,7 @@ be saved to. As with most unix programs, you can use
 documentation (`man curl`, or `info curl`). If they
 exist, the info pages are usually more detailed and better structured
 (and the man page may just be a [stub](http://xkcd.com/912/), though
-some tools only have man pages.
+some tools only have man pages).
 
 Here we are specifying that the file should be downloaded to
 the `packages` directory. Once curl finishes, do `ls packages`
@@ -442,7 +442,7 @@ make. Do:
 
 This is the convention for getting a makefile to remove
 everything it has built, but _only_ the things it has
-build - all source files will be untouched. You'll see
+built - all source files will be untouched. You'll see
 that all the object files have disappeared (what a waste!).
 
 Now do:
@@ -1438,10 +1438,10 @@ so for example:
 
     T1=$(mktemp ../tmp/XXXXXXXX);
     ./mp3_file_src.sh bn9th_m4.mp3 > $T1;
-    cat $T1 | ./audio_src.sh
+    cat $T1 | ./audio_sink.sh
 
 will create temporary file and store the name in variable T1, then
-decode the entire file to T1, then send it to the audio source.
+decode the entire file to T1, then send it to the audio sink.
 
 Hint: _your script could start with something like_:
 
@@ -1494,7 +1494,7 @@ Conclusion
 
 This will allow users to go into the `audio` directory and
 type `make filters`, and all your files will be updated. Also
-add the following to the end of `./makefile`:
+add the following to the end of `../makefile`:
 
     filters :
         cd audio && $(MAKE)
@@ -1506,7 +1506,7 @@ which means that from the base directory you can can type:
     make all
 
 and it will build all the tools and all the audio filters
-(and if you do `make -j 4` it will use up to 4 parallel
+(and if you do `make -j 4 all` it will use up to 4 parallel
 processes to do so).
 
 **Task**: Once it is all working, do another commit of
