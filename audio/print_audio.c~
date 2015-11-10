@@ -9,37 +9,20 @@
 
 int main(int argc, char *argv[])
 {	
-	int n, i, digit;
-		//fprintf(stderr, " argv[0] = %s", argv[0]);
-		//fprintf(stderr, " argv[1] = %s", argv[1]);
-		
-		if (argc == 2)
-		{
-			int s = strlen(argv[1]);
-			//fprintf(stderr, " s = %d", s);
-			i = 0;
-			n = 0;
-			while ( i < s )
-			{	
-				digit = argv[1][i]-'0';
-				n = digit*pow(10,s - i - 1) + n;
-				i++;
-				//fprintf(stderr, " n = %d", n);
-			}
-		}
-		else
-		{
-			n = 512;
-		}
-		//fprintf(stderr, " n = %d", n);
-		//n = 1;
+	int16_t sample_counter = 0;
 	while(1){
-		int16_t samples[n*2];            // Buffer containing one stereo sample sample (left and right, both 16 bit).
+
+		int16_t samples[2];            // Buffer containing one stereo sample sample (left and right, both 16 bit).
 		unsigned cbBuffer=sizeof(samples);	// size in bytes of  one stereo sample (4 bytes)
 		
 		// Read one sample from input
 		// Currently there is a lot of overhead here, as we have all the overhead of a system function call,
 		// but only get four bytes in return.
+
+		fprintf(stderr, "%d, %f, %d, %d \n", sample_counter, (float)sample_counter/44100, samples[0], samples[1]);
+		sample_counter++;
+
+
 		int got=read(STDIN_FILENO, samples, cbBuffer);
 		if(got<0){
 			fprintf(stderr, "%s : Read from stdin failed, error=%s.", argv[0], strerror(errno));
@@ -60,6 +43,8 @@ int main(int argc, char *argv[])
 		}else if(done!=cbBuffer){
 			fprintf(stderr, "%s : Could not read requested number of bytes from stream.\n", argv[0]);
 		}
+
+		
 	}
 
 	return 0;

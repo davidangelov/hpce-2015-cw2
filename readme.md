@@ -89,7 +89,7 @@ environment, so that could be Linux, OS-X, or Cygwin.
 Particular things it relies on are:
 
 - **<a href="https://en.wikipedia.org/wiki/Bash_(Unix_shell)">Bash</a>**: There are many shells (the program that
-  provides the interactive command line), and there are
+  proves the interactive command line), and there are
   some differences in input syntax. This coursework
   explicitly targets the Bash shell, as it is installed
   in most systems (even when it isn't the default).
@@ -210,7 +210,7 @@ be saved to. As with most unix programs, you can use
 documentation (`man curl`, or `info curl`). If they
 exist, the info pages are usually more detailed and better structured
 (and the man page may just be a [stub](http://xkcd.com/912/), though
-some tools only have man pages).
+some tools only have man pages.
 
 Here we are specifying that the file should be downloaded to
 the `packages` directory. Once curl finishes, do `ls packages`
@@ -442,7 +442,7 @@ make. Do:
 
 This is the convention for getting a makefile to remove
 everything it has built, but _only_ the things it has
-built - all source files will be untouched. You'll see
+build - all source files will be untouched. You'll see
 that all the object files have disappeared (what a waste!).
 
 Now do:
@@ -564,13 +564,6 @@ cygwin (32 or 64 bit), and on many linuxes, everything be fine. If you are
 using your own linux, then you can install `libasound2-dev`
 to get audio support. If you can't get it to play live audio at
 all, then don't worry. As long as `sox` builds it is fine._
-
-**Note (updated):** _There seem to be a lot of problems on modern stock
-Ubuntu, which means that `/dev/dsp` can't be opened. There are also
-some suggestions from @raymond-williams on [getting it working in Ubuntu](https://github.com/HPCE/hpce-2015-cw2/issues/5).
-But if you can't get audio working, it is fine to redirect to an mp3
-or wav and play it normally. As long as sox builds, you'll pass the
-auto-tests._
 
 The three commands correspond to three stages in a parallel processing pipeline:
 
@@ -1438,10 +1431,10 @@ so for example:
 
     T1=$(mktemp ../tmp/XXXXXXXX);
     ./mp3_file_src.sh bn9th_m4.mp3 > $T1;
-    cat $T1 | ./audio_sink.sh
+    cat $T1 | ./audio_src.sh
 
 will create temporary file and store the name in variable T1, then
-decode the entire file to T1, then send it to the audio sink.
+decode the entire file to T1, then send it to the audio source.
 
 Hint: _your script could start with something like_:
 
@@ -1494,7 +1487,7 @@ Conclusion
 
 This will allow users to go into the `audio` directory and
 type `make filters`, and all your files will be updated. Also
-add the following to the end of `../makefile`:
+add the following to the end of `./makefile`:
 
     filters :
         cd audio && $(MAKE)
@@ -1506,7 +1499,7 @@ which means that from the base directory you can can type:
     make all
 
 and it will build all the tools and all the audio filters
-(and if you do `make -j 4 all` it will use up to 4 parallel
+(and if you do `make -j 4` it will use up to 4 parallel
 processes to do so).
 
 **Task**: Once it is all working, do another commit of
